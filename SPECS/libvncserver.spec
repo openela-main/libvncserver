@@ -1,7 +1,7 @@
 Summary:    Library to make writing a VNC server easy
 Name:       libvncserver
 Version:    0.9.11
-Release:    15%{?dist}.1
+Release:    17%{?dist}
 
 # NOTE: --with-filetransfer => GPLv2
 License:    GPLv2+
@@ -45,6 +45,16 @@ Patch107:     libvncserver-0.9.11-libvncclient-cursor-limit-width-height-input-v
 Patch108:     libvncserver-0.9.11-CVE-2017-18922.patch
 # https://github.com/LibVNC/libvncserver/pull/308
 Patch109:     libvncserver-0.9.11-CVE-2019-20840.patch
+# https://github.com/LibVNC/libvncserver/issues/291
+Patch110:     libvncserver-0.9.11-CVE-2019-20839.patch
+# https://github.com/LibVNC/libvncserver/issues/253
+Patch111:     libvncserver-0.9.11-CVE-2018-21247.patch
+# https://github.com/LibVNC/libvncserver/issues/275
+Patch112:     libvncserver-0.9.11-CVE-2020-14405.patch
+# https://github.com/LibVNC/libvncserver/pull/416
+Patch113:     libvncserver-0.9.11-CVE-2020-14397.patch
+# https://github.com/LibVNC/libvncserver/issues/409
+Patch114:     libvncserver-0.9.11-CVE-2020-25708.patch
 
 BuildRequires:  autoconf
 BuildRequires:  automake
@@ -92,33 +102,7 @@ developing applications that use %{name}.
 
 
 %prep
-%setup -q -n %{name}-LibVNCServer-%{version}
-
-%patch4 -p1 -b .0004
-
-%patch10 -p1
-%patch11 -p1
-
-%patch12 -p1
-
-%patch100 -p1 -b .system_minilzo
-# Nuke bundled minilzo
-#rm -fv common/lzodefs.h common/lzoconf.h commmon/minilzo.h common/minilzo.c
-
-%patch101 -p1 -b .multilib
-%patch102 -p1
-%if 0%{?fedora} < 26
-%patch103 -p1 -b .soname
-%global soname 0
-%else
-%global soname 1
-%endif
-%patch104 -p1
-%patch105 -p1
-%patch106 -p1
-%patch107 -p1
-%patch108 -p1
-%patch109 -p1
+%autosetup -p1 -n %{name}-LibVNCServer-%{version}
 
 # Fix encoding
 for file in ChangeLog ; do
@@ -165,8 +149,8 @@ make -C test test ||:
 %files
 %license COPYING
 %doc AUTHORS ChangeLog NEWS README TODO
-%{_libdir}/libvncclient.so.%{soname}*
-%{_libdir}/libvncserver.so.%{soname}*
+%{_libdir}/libvncclient.so.0*
+%{_libdir}/libvncserver.so.0*
 
 %files devel
 %{_bindir}/libvncserver-config
@@ -178,9 +162,19 @@ make -C test test ||:
 
 
 %changelog
-* Tue Jul 28 2020 Michael Catanzaro <mcatanzaro@redhat.com> - 0.9.11-15.1
-- Fix NVR
-  Related: #1852356
+* Tue Nov 24 2020 Michael Catanzaro <mcatanzaro@redhat.com> - 0.9.11-17
+- Fix CVE-2020-25708
+  Resolves: #1898078
+
+* Tue Nov 03 2020 Michael Catanzaro <mcatanzaro@redhat.com> - 0.9.11-16
+- Fix CVE-2019-20839
+  Resolves: #1851032
+- Fix CVE-2018-21247
+  Resolves: #1852516
+- Fix CVE-2020-14405
+  Resolves: #1860527
+- Fix CVE-2020-14397
+  Resolves: #1861152
 
 * Mon Jul 27 2020 Michael Catanzaro <mcatanzaro@redhat.com> - 0.9.11-15
 - Fix CVE-2017-18922
