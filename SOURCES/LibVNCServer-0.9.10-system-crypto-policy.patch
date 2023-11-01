@@ -1,0 +1,26 @@
+diff -Naur libvncserver-LibVNCServer-0.9.10.old/libvncclient/tls_gnutls.c libvncserver-LibVNCServer-0.9.10/libvncclient/tls_gnutls.c
+--- libvncserver-LibVNCServer-0.9.10.old/libvncclient/tls_gnutls.c	2015-12-12 00:14:37.269157918 +0100
++++ libvncserver-LibVNCServer-0.9.10/libvncclient/tls_gnutls.c	2015-12-12 11:23:29.391385234 +0100
+@@ -31,8 +31,8 @@
+ #include "tls.h"
+ 
+ 
+-static const char *rfbTLSPriority = "NORMAL:+DHE-DSS:+RSA:+DHE-RSA:+SRP";
+-static const char *rfbAnonTLSPriority= "NORMAL:+ANON-DH";
++static const char *rfbTLSPriority = "@SYSTEM";
++static const char *rfbAnonTLSPriority= "@SYSTEM:+ANON-DH";
+ 
+ #define DH_BITS 1024
+ static gnutls_dh_params_t rfbDHParams;
+diff -Naur libvncserver-LibVNCServer-0.9.10.old/libvncserver/rfbssl_gnutls.c libvncserver-LibVNCServer-0.9.10/libvncserver/rfbssl_gnutls.c
+--- libvncserver-LibVNCServer-0.9.10.old/libvncserver/rfbssl_gnutls.c	2015-12-12 00:14:37.270157930 +0100
++++ libvncserver-LibVNCServer-0.9.10/libvncserver/rfbssl_gnutls.c	2015-12-12 11:14:49.966830581 +0100
+@@ -54,7 +54,7 @@
+ 
+     if (!GNUTLS_E_SUCCESS == (ret = gnutls_init(&session, GNUTLS_SERVER))) {
+       /* */
+-    } else if (!GNUTLS_E_SUCCESS == (ret = gnutls_priority_set_direct(session, "EXPORT", NULL))) {
++    } else if (!GNUTLS_E_SUCCESS == (ret = gnutls_set_default_priority(session))) {
+       /* */
+     } else if (!GNUTLS_E_SUCCESS == (ret = gnutls_credentials_set(session, GNUTLS_CRD_CERTIFICATE, ctx->x509_cred))) {
+       /* */
