@@ -1,0 +1,55 @@
+diff -up libvncserver-LibVNCServer-0.9.11/libvncclient/Makefile.am.system_minilzo libvncserver-LibVNCServer-0.9.11/libvncclient/Makefile.am
+--- libvncserver-LibVNCServer-0.9.11/libvncclient/Makefile.am.system_minilzo	2017-02-14 10:54:54.308402791 -0600
++++ libvncserver-LibVNCServer-0.9.11/libvncclient/Makefile.am	2017-02-14 10:56:28.007379315 -0600
+@@ -13,8 +13,8 @@ endif
+ endif
+ 
+ 
+-libvncclient_la_SOURCES=cursor.c listen.c rfbproto.c sockets.c vncviewer.c ../common/minilzo.c $(TLSSRCS)
+-libvncclient_la_LIBADD=$(TLSLIBS)
++libvncclient_la_SOURCES=cursor.c listen.c rfbproto.c sockets.c vncviewer.c $(TLSSRCS)
++libvncclient_la_LIBADD=$(TLSLIBS) -lminilzo
+ 
+ noinst_HEADERS=../common/lzodefs.h ../common/lzoconf.h ../common/minilzo.h tls.h
+ 
+diff -up libvncserver-LibVNCServer-0.9.11/libvncclient/rfbproto.c.system_minilzo libvncserver-LibVNCServer-0.9.11/libvncclient/rfbproto.c
+--- libvncserver-LibVNCServer-0.9.11/libvncclient/rfbproto.c.system_minilzo	2016-12-30 07:01:28.000000000 -0600
++++ libvncserver-LibVNCServer-0.9.11/libvncclient/rfbproto.c	2017-02-14 10:54:54.309402801 -0600
+@@ -66,7 +66,7 @@
+ #include <gcrypt.h>
+ #endif
+ 
+-#include "minilzo.h"
++#include <lzo/minilzo.h>
+ #include "tls.h"
+ 
+ #ifdef _MSC_VER
+diff -up libvncserver-LibVNCServer-0.9.11/libvncserver/Makefile.am.system_minilzo libvncserver-LibVNCServer-0.9.11/libvncserver/Makefile.am
+--- libvncserver-LibVNCServer-0.9.11/libvncserver/Makefile.am.system_minilzo	2017-02-14 10:54:54.309402801 -0600
++++ libvncserver-LibVNCServer-0.9.11/libvncserver/Makefile.am	2017-02-14 10:57:28.495009713 -0600
+@@ -53,11 +53,11 @@ endif
+ LIB_SRCS = main.c rfbserver.c rfbregion.c auth.c sockets.c $(WEBSOCKETSSRCS) \
+ 	stats.c corre.c hextile.c rre.c translate.c cutpaste.c \
+ 	httpd.c cursor.c font.c \
+-	draw.c selbox.c ../common/d3des.c ../common/vncauth.c cargs.c ../common/minilzo.c ultra.c scale.c \
++	draw.c selbox.c ../common/d3des.c ../common/vncauth.c cargs.c ultra.c scale.c \
+ 	$(ZLIBSRCS) $(TIGHTSRCS) $(TIGHTVNCFILETRANSFERSRCS)
+ 
+ libvncserver_la_SOURCES=$(LIB_SRCS)
+-libvncserver_la_LIBADD=$(WEBSOCKETSSSLLIBS)
++libvncserver_la_LIBADD=$(WEBSOCKETSSSLLIBS) -lminilzo
+ 
+ if WITH_SYSTEMD
+ AM_CPPFLAGS += -DLIBVNCSERVER_WITH_SYSTEMD
+diff -up libvncserver-LibVNCServer-0.9.11/libvncserver/ultra.c.system_minilzo libvncserver-LibVNCServer-0.9.11/libvncserver/ultra.c
+--- libvncserver-LibVNCServer-0.9.11/libvncserver/ultra.c.system_minilzo	2016-12-30 07:01:28.000000000 -0600
++++ libvncserver-LibVNCServer-0.9.11/libvncserver/ultra.c	2017-02-14 10:54:54.309402801 -0600
+@@ -8,7 +8,7 @@
+  */
+ 
+ #include <rfb/rfb.h>
+-#include "minilzo.h"
++#include <lzo/minilzo.h>
+ 
+ /*
+  * cl->beforeEncBuf contains pixel data in the client's format.

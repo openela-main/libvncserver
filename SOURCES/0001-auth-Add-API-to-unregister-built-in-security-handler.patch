@@ -1,0 +1,47 @@
+From b793e8c51ab253c0951e43a84e9d448416462887 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Jonas=20=C3=85dahl?= <jadahl@gmail.com>
+Date: Wed, 27 Nov 2019 16:58:29 +0100
+Subject: [PATCH] auth: Add API to unregister built in security handlers
+
+If I have a VNC server that first accepts password based authentication,
+then switches to something not using password (e.g. a prompt on screen),
+the security handler from the first would still be sent as, meaning
+clients would still ask for a password without there being one.
+---
+ libvncserver/auth.c | 7 +++++++
+ rfb/rfb.h           | 1 +
+ 2 files changed, 8 insertions(+)
+
+diff --git a/libvncserver/auth.c b/libvncserver/auth.c
+index 55e0b3c9..8b6fc48f 100644
+--- a/libvncserver/auth.c
++++ b/libvncserver/auth.c
+@@ -248,6 +248,13 @@ determinePrimarySecurityType(rfbClientPtr cl)
+     }
+ }
+ 
++void
++rfbUnregisterPrimarySecurityHandlers (void)
++{
++    rfbUnregisterSecurityHandler(&VncSecurityHandlerNone);
++    rfbUnregisterSecurityHandler(&VncSecurityHandlerVncAuth);
++}
++
+ void
+ rfbSendSecurityTypeList(rfbClientPtr cl,
+                         enum rfbSecurityTag exclude)
+diff --git a/rfb/rfb.h b/rfb/rfb.h
+index 70b92242..738dbd82 100644
+--- a/rfb/rfb.h
++++ b/rfb/rfb.h
+@@ -887,6 +887,7 @@ extern void rfbProcessClientSecurityType(rfbClientPtr cl);
+ extern void rfbAuthProcessClientMessage(rfbClientPtr cl);
+ extern void rfbRegisterSecurityHandler(rfbSecurityHandler* handler);
+ extern void rfbUnregisterSecurityHandler(rfbSecurityHandler* handler);
++extern void rfbUnregisterPrimarySecurityHandlers (void);
+ extern void rfbRegisterChannelSecurityHandler(rfbSecurityHandler* handler);
+ extern void rfbUnregisterChannelSecurityHandler(rfbSecurityHandler* handler);
+ extern void rfbSendSecurityTypeList(rfbClientPtr cl, enum rfbSecurityTag exclude);
+-- 
+2.23.0
+
